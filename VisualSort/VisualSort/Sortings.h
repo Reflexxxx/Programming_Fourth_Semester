@@ -14,3 +14,4 @@ public:
 	std::function<void(std::vector<Element>::iterator, std::vector<Element>::iterator, std::function<bool(Element, Element)>)> getSelectionSort();
 };
 #endif
+
