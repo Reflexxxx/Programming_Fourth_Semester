@@ -120,4 +120,4 @@ bool Sorting::isSorted(int *arr, int size)
 		if (arr[i] < arr[i - 1]) return false;
 	return true;
 }
-
+*/
