@@ -11,7 +11,9 @@ void sort(Data& d) {
 int main()
 {
 	RenderWindow window(VideoMode(800, 600), "Visual sort");
-	
+
+	auto begin = std::chrono::steady_clock::now();
+
 	Data d(10, 500, 1000);
 	Visualizer visualizer(d);
 	visualizer.setSize({800, 50});
@@ -26,6 +28,10 @@ int main()
 
 	Sortings s;
 	visualizer.sort(s.getBubbleSort(), _comp);
+
+	auto end = std::chrono::steady_clock::now();
+	auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+	std::cout << "The time: " << elapsed_ms.count() << " ms\n";
 
 	while (window.isOpen())
 	{
