@@ -1,8 +1,10 @@
 #include "helpers.h"
 #include "Visualizer.h"
 #include "Sortings.h"
+#include "Menu.h"
 
 using namespace sf;
+
 
 void sort(Data& d) {
 	std::sort(d.begin(), d.end(), Data::comp);
@@ -11,50 +13,98 @@ void sort(Data& d) {
 int main()
 {
 	RenderWindow window(VideoMode(800, 600), "Visual sort");
-
-	auto begin = std::chrono::steady_clock::now();
-
+	Menu menu;
+	sort_type current_type;
+	long long size = 100;
 	Data d(10, 500, 1000);
 	Visualizer visualizer(d);
+	Visualizer * vis = 0;
 	visualizer.setSize({800, 50});
 	visualizer.setPosition({0, 300});
 
-	auto _comp = [&](Element a, Element b) {
-		//std::this_thread::sleep_for(std::chrono::nanoseconds(10));
-		return Data::comp(a, b);
-	};
-
 	//visualizer.sort(std::sort<decltype(d.begin()), decltype(_comp)>, _comp);
-
-	Sortings s;
-	visualizer.sort(s.getBubbleSort(), _comp);
-
-	auto end = std::chrono::steady_clock::now();
-	auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
-	std::cout << "The time: " << elapsed_ms.count() << " ms\n";
-
+	//visualizer.sort(s.getBubbleSort(), _comp);
+	//for only one time esc has been pressed
+	bool esc_pressed = false;
 	while (window.isOpen())
 	{
-		// check all the window's events that were triggered since the last iteration of the loop
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(window); //coord of mouse (in px)
+		sf::Vector2f pos = window.mapPixelToCoords(pixelPos); //coord of mous (transform)
+		//if we pressed esc we come to menu
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !esc_pressed)
+		{
+			esc_pressed = true;
+			//esc in the menu return us at home
+			if (menu.is_menu())
+			{
+				menu.reset();
+			}
+			//open menu;
+			else
+			{
+				menu.reset();
+				menu.open();
+			}
+		}
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && esc_pressed)
+		{
+			esc_pressed = false;
+		}
+		if (Keyboard::isKeyPressed(sf::Keyboard::Enter))
+		{
+			visualizer.check_mutex();
+			Data d(10, 500, 1000);
+			visualizer.setData(d);
+			visualizer.setSize({ 800, 50 });
+			visualizer.setPosition({ 0, 500 });
+			//visualizer.sort(s.getBubbleSort(), _comp);
+		}
 		Event event;
+
+		
 		while (window.pollEvent(event))
 		{
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 			{
-				//visualizer.temp_thread->detach();
-				//delete visualizer.temp_thread;
 				window.close();
 			}
+
+			
+			if (menu.is_menu())
+			{
+				shut_down = true;
+				//try to change color of menu's buttons
+				menu.change_colors(pos);
+				//pressed left mouse
+				if (event.type == sf::Event::MouseButtonPressed)
+				{
+					if (event.key.code == sf::Mouse::Left)
+					{
+						Data d_t(10, 500, 1000);
+						vis = new Visualizer(d_t);
+						menu.work(pos, window, size, current_type, *vis);
+
+						
+					}
+				}
+
+			}
+			else
+			{
+				
+			}
 		}
+		
 
 		window.clear();
-		window.draw(visualizer);
+		if (menu.is_menu())
+		{
+			menu.draw(window, size);
+		}
+		//else window.draw(visualizer);
+		else window.draw(*vis);
 		window.display();
-		//window.clear(Color::Black);
 	}
-	//visualizer.temp_thread.join();
-	//visualizer.temp_thread->detach();
-	//if (visualizer.temp_thread) delete visualizer.temp_thread;
 	return 0;
 }

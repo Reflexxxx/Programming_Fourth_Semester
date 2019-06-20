@@ -2,7 +2,51 @@
 
 Visualizer::Visualizer(Data & data) : _elements(data.getElements())
 { 
-	//setPosition({ 0,0 }); 
+	//sorting.lock();
+	//sorting.unlock();
+	//temp_thread = 0;
+	num = 0;
+	temp_thread.resize(15);
+
+}
+
+void Visualizer::setData(Data & data)
+{
+	if (sorting.try_lock())
+	{
+		_elements = data.getElements();
+		sorting.unlock();
+	}
+	else {
+		std::cout << "second" << std::endl;
+		temp_thread[num % 15]->detach();
+		delete temp_thread[num % 15];
+		_elements = data.getElements();
+		sorting.unlock();
+	}
+	
+}
+void Visualizer::check_mutex()
+{
+	/*
+	try
+	{
+		if (sorting.try_lock())
+		{
+			sorting.unlock();
+		}
+		else {
+			std::cout << "third" << std::endl;
+			temp_thread->detach();
+			delete temp_thread;
+			sorting.unlock();
+		}
+	}
+	catch (...)
+	{
+		std::cout << "WTF3" << std::endl;
+	}
+	*/
 }
 
 void Visualizer::draw(sf::RenderTarget & target, sf::RenderStates states) const
