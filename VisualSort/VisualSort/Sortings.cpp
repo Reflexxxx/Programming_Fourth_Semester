@@ -85,6 +85,27 @@ std::function<void(std::vector<Element>::iterator, std::vector<Element>::iterato
 
 }
 
+//std::function<void(std::vector<Element>::iterator, std::vector<Element>::iterator, std::function<bool(Element, Element)>)> Sortings::getshellSortSort()
+//{
+//
+//	auto func = [](std::vector<Element>::iterator begin, std::vector<Element>::iterator end, std::function<bool(Element, Element)> comp)
+//	{
+//		for (auto i = begin; i != end; i++)
+//		{ 
+//			auto temp = arr[i];
+//
+//			int j;
+//			for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
+//				arr[j] = arr[j - gap];
+//
+//			arr[j] = temp;
+//		}
+//	}
+//
+//	return func;
+//
+//}
+
 
 //int partition(int arr[], int low, int high)
 //{
